@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { User, UserRole, Ticket, TicketStatus } from './types';
 import Sidebar from './components/Sidebar';
@@ -83,7 +82,6 @@ const App: React.FC = () => {
 
   const handleUpdateUser = (updatedUser: User) => {
     setRegisteredUsers(registeredUsers.map(u => u.uid === updatedUser.uid ? updatedUser : u));
-    // If the updated user is the current user, update the state
     if (currentUser?.uid === updatedUser.uid) {
       setCurrentUser(updatedUser);
     }
@@ -97,7 +95,7 @@ const App: React.FC = () => {
 
   if (!currentUser) return (
     <div className="h-screen w-full flex items-center justify-center bg-slate-950 px-4">
-      <div className="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
+      <div className="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="inline-flex p-5 bg-emerald-50 rounded-[2rem] mb-6 shadow-inner">
             <i className="fas fa-print text-6xl text-emerald-600"></i>
@@ -138,7 +136,7 @@ const App: React.FC = () => {
           </div>
 
           {loginError && (
-            <p className="text-rose-500 text-[10px] font-black uppercase text-center bg-rose-50 py-2 rounded-xl border border-rose-100 animate-bounce">
+            <p className="text-rose-500 text-[10px] font-black uppercase text-center bg-rose-50 py-2 rounded-xl border border-rose-100">
               <i className="fas fa-exclamation-circle mr-1"></i> {loginError}
             </p>
           )}
