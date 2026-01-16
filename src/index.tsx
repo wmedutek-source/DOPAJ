@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import App from './App';
 
-const Test = () => (
-  <div style={{ padding: '50px', textAlign: 'center', background: 'yellow' }}>
-    <h1>¡EL INDEX.TSX ESTÁ CARGANDO!</h1>
-    <p>Si ves esto, el problema está dentro de tu archivo App.tsx</p>
-  </div>
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Failed to find the root element');
+
+ReactDOM.createRoot(rootElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
-
-ReactDOM.createRoot(document.getElementById('root')!).render(<Test />);
