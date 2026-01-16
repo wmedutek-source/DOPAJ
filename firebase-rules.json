@@ -1,0 +1,19 @@
+
+{
+  "rules": {
+    "firestore": {
+      "tickets": {
+        "read": "request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN' || resource.data.engineerId == request.auth.uid)",
+        "write": "request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN' || (resource.data.engineerId == request.auth.uid && resource.data.status != 'CLOSED'))"
+      },
+      "users": {
+        "read": "request.auth != null",
+        "write": "request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN'"
+      }
+    },
+    "storage": {
+      "pdfs": { "read": "request.auth != null", "write": "get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN'" },
+      "evidence": { "read": "request.auth != null", "write": "request.auth != null" }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "PrintSupport Pro - Admin & Engineer Hub",
+  "description": "Enterprise-grade technical support management system for printer service companies. Includes ticket lifecycle, digital signatures, evidence capture, and real-time dashboards.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
