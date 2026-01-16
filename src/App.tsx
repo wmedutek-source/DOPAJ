@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, UserRole, Ticket, TicketStatus } from './types.ts';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import TicketList from './components/TicketList';
 import TicketForm from './components/TicketForm';
+import UserManagement from './components/UserManagement';
 import OfflineStatus from './components/OfflineStatus';
 
-// Nota: Hemos quitado TicketExecution y UserManagement temporalmente porque tienen errores internos.
-
+// Nota: TicketExecution sigue en mantenimiento hasta el siguiente paso
 const INITIAL_USERS: User[] = [
   { uid: 'admin-1', email: 'admin@dopaj.com', name: 'Admin Principal', role: UserRole.ADMIN, password: '123' },
   { uid: 'e1', email: 'juan.perez@dopaj.com', name: 'Juan Pérez', role: UserRole.ENGINEER, password: '123' },
@@ -17,13 +17,14 @@ const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [view, setView] = useState<'dashboard' | 'tickets' | 'create' | 'execution' | 'users'>('dashboard');
   const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Lo dejamos abierto por defecto para que lo veas
+  const [registeredUsers, setRegisteredUsers] = useState<User[]>(INITIAL_USERS);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPass, setLoginPass] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const user = INITIAL_USERS.find(u => u.email === loginEmail && u.password === loginPass);
+    const user = registeredUsers.find(u => u.email === loginEmail && u.password === loginPass);
     if (user) setCurrentUser(user);
   };
 
@@ -32,8 +33,8 @@ const App: React.FC = () => {
       <div className="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md text-center">
         <h1 className="text-4xl font-black text-slate-900 mb-8 tracking-tighter">DOPAJ Pro</h1>
         <form onSubmit={handleLogin} className="space-y-4">
-          <input type="text" placeholder="admin@dopaj.com" className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl font-bold text-slate-700" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} />
-          <input type="password" placeholder="123" className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl font-bold text-slate-700" value={loginPass} onChange={e => setLoginPass(e.target.value)} />
+          <input type="text" placeholder="Usuario" className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl font-bold text-slate-700" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} />
+          <input type="password" placeholder="Contraseña" className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl font-bold text-slate-700" value={loginPass} onChange={e => setLoginPass(e.target.value)} />
           <button type="submit" className="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-lg hover:bg-emerald-500 transition-all">INGRESAR</button>
         </form>
       </div>
@@ -64,6 +65,7 @@ const App: React.FC = () => {
               {view === 'dashboard' && 'Panel Gerencial'}
               {view === 'tickets' && 'Servicios'}
               {view === 'create' && 'Nueva Orden'}
+              {view === 'users' && 'Directorio de Personal'}
             </h2>
           </div>
           <OfflineStatus />
@@ -72,12 +74,22 @@ const App: React.FC = () => {
         <div className="p-8 max-w-7xl mx-auto">
           {view === 'dashboard' && <Dashboard tickets={tickets} />}
           {view === 'tickets' && <TicketList tickets={tickets} role={currentUser.role} userId={currentUser.uid} onSelect={() => {}} activeFilter="All" onFilterChange={() => {}} />}
-          {view === 'create' && <TicketForm engineers={INITIAL_USERS.filter(u => u.role === UserRole.ENGINEER)} onSubmit={(t) => { setTickets([t, ...tickets]); setView('tickets'); }} onCancel={() => setView('tickets')} />}
-          {(view === 'execution' || view === 'users') && (
+          {view === 'create' && <TicketForm engineers={registeredUsers.filter(u => u.role === UserRole.ENGINEER)} onSubmit={(t) => { setTickets([t, ...tickets]); setView('tickets'); }} onCancel={() => setView('tickets')} />}
+          
+          {view === 'users' && (
+            <UserManagement 
+              users={registeredUsers} 
+              onAddUser={(u) => setRegisteredUsers([...registeredUsers, u])} 
+              onUpdateUser={(u) => setRegisteredUsers(registeredUsers.map(old => old.uid === u.uid ? u : old))} 
+              onDeleteUser={(id) => setRegisteredUsers(registeredUsers.filter(u => u.uid !== id))} 
+            />
+          )}
+
+          {view === 'execution' && (
              <div className="p-20 text-center bg-white rounded-[3rem] shadow-xl border-2 border-dashed border-slate-200">
-                <i className="fas fa-tools text-5xl text-slate-300 mb-4"></i>
-                <h3 className="text-xl font-bold text-slate-800">Sección en Mantenimiento</h3>
-                <p className="text-slate-500">Estamos corrigiendo un error técnico en este módulo.</p>
+                <i className="fas fa-robot text-5xl text-emerald-300 mb-4"></i>
+                <h3 className="text-xl font-bold text-slate-800">Módulo de IA en Revisión</h3>
+                <p className="text-slate-500">Estamos optimizando el motor de Gemini.</p>
              </div>
           )}
         </div>
