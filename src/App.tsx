@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { User, UserRole, Ticket, TicketStatus } from './types.ts';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
+import TicketList from './components/TicketList';
+import TicketForm from './components/TicketForm';
 import OfflineStatus from './components/OfflineStatus';
 
 const INITIAL_USERS: User[] = [
@@ -12,6 +14,7 @@ const INITIAL_USERS: User[] = [
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [view, setView] = useState<'dashboard' | 'tickets' | 'create' | 'execution' | 'users'>('dashboard');
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPass, setLoginPass] = useState('');
@@ -37,14 +40,20 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
-      <Sidebar role={currentUser.role} activeView={view} setView={setView} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} onLogout={() => setCurrentUser(null)} tickets={[]} />
+      <Sidebar role={currentUser.role} activeView={view} setView={setView} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} onLogout={() => setCurrentUser(null)} tickets={tickets} />
       <main className={`flex-1 p-8 transition-all ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
         <header className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-black">Panel de Control</h2>
+          <h2 className="text-2xl font-black">
+            {view === 'dashboard' && 'Panel Gerencial'}
+            {view === 'tickets' && 'Servicios'}
+            {view === 'create' && 'Nueva Orden'}
+          </h2>
           <OfflineStatus />
         </header>
-        {view === 'dashboard' && <Dashboard tickets={[]} />}
-        {view !== 'dashboard' && <div className="p-10 bg-white rounded-2xl">Componente en pausa para pruebas...</div>}
+        {view === 'dashboard' && <Dashboard tickets={tickets} />}
+        {view === 'tickets' && <TicketList tickets={tickets} role={currentUser.role} userId={currentUser.uid} onSelect={() => {}} />}
+        {view === 'create' && <TicketForm engineers={[]} onSubmit={(t) => { setTickets([t, ...tickets]); setView('tickets'); }} onCancel={() => setView('tickets')} />}
+        {view === 'execution' && <div className="p-10 bg-yellow-100 rounded-2xl">Aquí irá el ejecutor de IA (Paso final)</div>}
       </main>
     </div>
   );
