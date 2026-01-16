@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { User, UserRole } from '../types';
+import { User, UserRole } from '../types.ts';
 
 interface UserManagementProps {
   users: User[];
@@ -77,7 +76,6 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onUpd
           <button 
             onClick={() => handleOpenEdit(user)}
             className="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"
-            title="Editar Usuario"
           >
             <i className="fas fa-edit text-xs"></i>
           </button>
@@ -85,7 +83,6 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onUpd
             <button 
               onClick={() => onDeleteUser(user.uid)}
               className="w-8 h-8 rounded-lg bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center"
-              title="Eliminar Usuario"
             >
               <i className="fas fa-trash-alt text-xs"></i>
             </button>
@@ -97,128 +94,4 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onUpd
           <h5 className="font-black text-slate-800 tracking-tight truncate">{user.name}</h5>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user.email}</p>
         </div>
-        <div className="pt-4 border-t border-slate-50 flex justify-between items-center">
-          <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${colorClass === 'green' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-600 border-slate-200'}`}>
-            {user.role}
-          </span>
-          <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-300">
-            <i className="fas fa-key"></i> Pass: {user.password ? '••••' : 'N/A'}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="space-y-12 max-w-6xl mx-auto pb-32">
-      {/* Header & Add Button */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm">
-        <div>
-          <h3 className="text-2xl font-black text-slate-800 tracking-tighter">Directorio de Personal</h3>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Gestión corporativa de accesos y perfiles</p>
-        </div>
-        {!isFormOpen && (
-          <button 
-            onClick={handleOpenAdd}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-emerald-100 transition-all flex items-center gap-3 active:scale-95"
-          >
-            <i className="fas fa-user-plus"></i> Dar de Alta Personal
-          </button>
-        )}
-      </div>
-
-      {/* Add/Edit Form Overlay */}
-      {isFormOpen && (
-        <div className="bg-slate-900 p-8 rounded-[3rem] text-white shadow-2xl animate-in fade-in zoom-in-95 duration-300 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-10 opacity-5">
-             <i className="fas fa-users-cog text-8xl"></i>
-          </div>
-          <div className="flex justify-between items-center mb-8 relative z-10">
-            <div>
-              <h4 className="font-black text-2xl tracking-tighter">{editingUser ? 'Actualizar Perfil' : 'Registro de Nuevo Personal'}</h4>
-              <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest mt-1">Complete los campos de acceso</p>
-            </div>
-            <button onClick={() => setIsFormOpen(false)} className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-rose-500 transition-all">
-              <i className="fas fa-times"></i>
-            </button>
-          </div>
-          
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre Completo</label>
-              <input 
-                required
-                value={formData.name}
-                onChange={e => setFormData({...formData, name: e.target.value})}
-                className="w-full bg-slate-800 border-2 border-slate-700 p-4 rounded-2xl text-sm font-bold outline-none focus:border-emerald-500 transition-all" 
-                placeholder="Ej. Juan Pérez"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre de Usuario (Login)</label>
-              <input 
-                required
-                value={formData.email}
-                onChange={e => setFormData({...formData, email: e.target.value})}
-                className="w-full bg-slate-800 border-2 border-slate-700 p-4 rounded-2xl text-sm font-bold outline-none focus:border-emerald-500 transition-all" 
-                placeholder="Ej. jperez.dopaj"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contraseña de Acceso</label>
-              <input 
-                required
-                type="text"
-                value={formData.password}
-                onChange={e => setFormData({...formData, password: e.target.value})}
-                className="w-full bg-slate-800 border-2 border-slate-700 p-4 rounded-2xl text-sm font-bold outline-none focus:border-emerald-500 transition-all" 
-                placeholder="Ej. Dopaj2024*"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Rol Operativo</label>
-              <select 
-                value={formData.role}
-                onChange={e => setFormData({...formData, role: e.target.value as UserRole})}
-                className="w-full bg-slate-800 border-2 border-slate-700 p-4 rounded-2xl text-sm font-bold outline-none focus:border-emerald-500 transition-all appearance-none"
-              >
-                <option value={UserRole.ENGINEER}>INGENIERO DE CAMPO</option>
-                <option value={UserRole.ADMIN}>ADMINISTRADOR CORPORATIVO</option>
-              </select>
-            </div>
-            <div className="md:col-span-2 pt-4">
-              <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black py-5 rounded-2xl transition-all shadow-xl shadow-emerald-900/40 text-lg uppercase tracking-tighter">
-                {editingUser ? 'Guardar Cambios' : 'Confirmar Alta de Usuario'}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Engineers Section - Green */}
-      <section className="space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="h-6 w-1.5 bg-emerald-600 rounded-full"></div>
-          <h4 className="font-black text-slate-800 uppercase text-xs tracking-[0.2em]">Ingenieros de Campo ({engineers.length})</h4>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {engineers.map(user => <UserCard key={user.uid} user={user} colorClass="green" />)}
-          {engineers.length === 0 && <p className="text-slate-400 text-xs font-bold italic">No hay ingenieros registrados</p>}
-        </div>
-      </section>
-
-      {/* Administrators Section - Black */}
-      <section className="space-y-6 pt-12 border-t border-slate-200">
-        <div className="flex items-center gap-3">
-          <div className="h-6 w-1.5 bg-slate-900 rounded-full"></div>
-          <h4 className="font-black text-slate-800 uppercase text-xs tracking-[0.2em]">Administradores Corporativos ({admins.length})</h4>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {admins.map(user => <UserCard key={user.uid} user={user} colorClass="black" />)}
-        </div>
-      </section>
-    </div>
-  );
-};
-
-export default UserManagement;
+        <div className="
