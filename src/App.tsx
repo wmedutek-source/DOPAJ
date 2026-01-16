@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Ticket, TicketStatus } from './types';
+import { User, UserRole, Ticket, TicketStatus } from './types.ts';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import TicketList from './components/TicketList';
